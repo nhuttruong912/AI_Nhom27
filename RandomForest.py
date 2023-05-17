@@ -21,7 +21,7 @@ mã hóa các biến phân loại, chia dữ liệu thành các tập huấn luy
 """
 # Kiểm tra các giá trị còn thiếu
 #print(df.isnull().sum())
-
+#Xử lý các giá trị còn thiếu (nếu có)
 #df = df.dropna(subset=['booking_status'])
 #df = df.fillna(0)
 
