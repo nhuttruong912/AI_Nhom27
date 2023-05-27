@@ -6,10 +6,15 @@
 
 import numpy as np
 from queue import PriorityQueue
-
+#Hàm `heuristic` tính toán khoảng cách Manhattan giữa hai trạng thái của bài toán 8 ô chữ. 
+#Khoảng cách Manhattan là tổng khoảng cách giữa mỗi ô và vị trí của nó trong trạng thái mục tiêu.
 def heuristic(a, b):
     return np.sum(a != b)
 
+
+#Hàm `astar` thực hiện thuật toán A* để tìm đường đi ngắn nhất từ trạng thái ban đầu đến trạng thái mục tiêu. 
+#Hàm này sử dụng một hàng đợi ưu tiên để lưu trữ các trạng thái được xét đến và tính toán chi phí để đi từ trạng thái ban đầu đến
+#các trạng thái khác.
 def astar(start, goal):
     frontier = PriorityQueue()
     frontier.put((0, start))
@@ -34,6 +39,8 @@ def astar(start, goal):
 
     return came_from, cost_so_far
 
+#Hàm `reconstruct_path` tạo ra một danh sách các trạng thái để đi từ trạng thái ban đầu đến trạng thái mục tiêu.
+
 def reconstruct_path(came_from, start, goal):
     current = goal
     path = [current]
@@ -43,6 +50,8 @@ def reconstruct_path(came_from, start, goal):
     path.reverse()
     return path
 
+#Hàm `neighbors` tìm tất cả các trạng thái kế tiếp có thể được tạo ra từ một trạng thái hiện tại bằng cách 
+#di chuyển ô trống lên, xuống, sang trái hoặc sang phải.
 def neighbors(current):
     x = int(np.where(current == 0)[0])
     y = int(np.where(current == 0)[1])
@@ -57,6 +66,8 @@ def neighbors(current):
         temp_board[x][y], temp_board[r][c] = temp_board[r][c], temp_board[x][y]
         results.append(temp_board)
     return results
+
+
 
 start_state = np.array([[2,8,3],[1,6,4],[7,0,5]])
 goal_state = np.array([[1,2,3],[8,0,4],[7,6,5]])
