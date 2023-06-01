@@ -55,16 +55,22 @@ X = df.drop('booking_status', axis=1)  #1 tương đương trục cột
 y = df['booking_status']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 """
-Trong đó X là ma trận đặc trưng và y là vectơ nhãn.
+Trong đó X là tập dữ liệu đặc trưng(ma trận đặc trưng (feature matrix)) và y là tập dữ liệu mục tiêu (vectơ nhãn(label vector))
 Tham số test_size xác định tỷ lệ phần trăm của tập kiểm tra trong tập dữ liệu ban đầu.
 Tham số random_state xác định hạt giống cho quá trình ngẫu nhiên.
+X_train: tập dữ liệu đặc trưng của tập huấn luyện.
+X_test: tập dữ liệu đặc trưng của tập kiểm tra.
+y_train: tập dữ liệu mục tiêu của tập huấn luyện.
+y_test: tập dữ liệu mục tiêu của tập kiểm tra.
 """
 
 """
 Khởi tạo một đối tượng rừng ngẫu nhiên với các tham số mong muốn, 
 chẳng hạn như số cây quyết định (n_estimators), 
-số tính năng được chọn ngẫu nhiên cho mỗi cây (max_features), 
-độ sâu tối đa của mỗi cây (max_depth), vân vân
+max_features='sqrt': số lượng đặc trưng được sử dụng để xây dựng mỗi cây con trong mô hình. 
+Trong trường hợp này, số lượng đặc trưng được chọn là căn bậc hai của tổng số đặc trưng.
+độ sâu tối đa của mỗi cây (max_depth),
+random_state=42: giá trị khởi tạo cho bộ sinh số ngẫu nhiên (random number generator)
 """
 rf = RandomForestClassifier(n_estimators=100, max_features='sqrt', max_depth=10, random_state=42)
 
