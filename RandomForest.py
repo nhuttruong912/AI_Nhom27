@@ -51,7 +51,7 @@ df['booking_status'] = le.fit_transform(df['booking_status'])
 
 # Tách dữ liệu thành tập huấn luyện và tập kiểm tra
 from sklearn.model_selection import train_test_split
-X = df.drop('booking_status', axis=1)  #1 tương đương trục cột
+X = df.drop(['booking_status', 'Booking_ID'], axis=1)  #1 tương đương trục cột
 y = df['booking_status']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 """
