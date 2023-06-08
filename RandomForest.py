@@ -11,8 +11,8 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 # Tải xuống tập dữ liệu từ Kaggle và đọc nó vào pandas dataframe
 # Đảm bảo rằng file kaggle.json đã nằm trong thư mục ~/.kaggle/
-import kaggle
-kaggle.api.authenticate()
+#import kaggle
+#kaggle.api.authenticate()
 #kaggle.api.dataset_download_files('ahsan81/hotel-reservations-classification-dataset', path='C:/Users/nhutt/.kaggle')
 df = pd.read_csv('C:/Users/nhutt/.kaggle/hotel-reservations-classification-dataset.zip')
 """
@@ -22,7 +22,6 @@ mã hóa các biến phân loại, chia dữ liệu thành các tập huấn luy
 # Kiểm tra các giá trị còn thiếu
 #print(df.isnull().sum())
 #Xử lý các giá trị còn thiếu (nếu có)
-#df = df.dropna(subset=['booking_status'])
 #df = df.fillna(0)
 
 
