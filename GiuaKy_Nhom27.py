@@ -4,17 +4,17 @@ import argparse
 
 class Node:
 
-    # ----- Initalize node with pattern gfunction the blanklocation and the move used to reach that state -----#
+    # ----- Khởi tạo nút -----#
     def __init__(self, pattern, gfunc, move='start'):
         self.pattern = pattern
         self.gfunc = gfunc
         self.move = move
         for (row, i) in zip(pattern, range(3)):
             if 0 in row:
-                self.blankloc = [i, row.index(0)]
+                self.blankloc = [i, row.index(0)] #lấy vị trí phần tử 0
             # print(self.blankloc[0],self.blankloc[1])
 
-    # ----- equal magic function to check if states are equal or node element by element-----#
+    # ----- kiểm tra xem các trạng thái có bằng nhau hay không----- #
     def __eq__(self, other):
         if other == None:
             return False
@@ -28,7 +28,7 @@ class Node:
                     return False
         return True
 
-    # ----- magic function to retrive an element from the node like an array -----#
+    # -----  để lấy một phần tử đầu tàu giống như một mảng -----#
     def __getitem__(self, key):
         if isinstance(key, tuple) != True:
             raise TypeError
@@ -37,7 +37,8 @@ class Node:
 
         return self.pattern[key[0]][key[1]]
 
-    # ----- function to calculate hfunction according to given goal -----#
+    # tính toán hàm heuristic cho trạng thái hiện tại của trò chơi bằng cách đếm số lượng ô không đúng vị trí so với trạng thái mục tiêu.
+    # Hàm heuristic được sử dụng để ước tính chi phí để đạt được trạng thái mục tiêu. -----#
 
     def calc_hfunc(self, goal):
         self.hfunc = 0
@@ -47,13 +48,13 @@ class Node:
                 if self.pattern[i][j] != goal.pattern[i][j]:
                     self.hfunc += 1
         if self.blankloc != goal.blankloc:
-            self.hfunc -= 1  # Remove one counter if the blank location is displaced because it overestimates the goal
+            self.hfunc -= 1
 
         self.ffunc = self.hfunc + self.gfunc
 
         return self.hfunc, self.gfunc, self.ffunc
 
-    # ----- Fucntion to move the blank tile left if possible -----#
+    # ----- Hàm di chuyển ô trống sang trái nếu có thể -----#
     def moveleft(self):
         if self.blankloc[1] == 0:
             return None
@@ -64,7 +65,7 @@ class Node:
 
         return Node(left, self.gfunc + 1, 'left')
 
-    # ----- Fucntion to move the blank tile right if possible -----#
+    # ----- Hàm di chuyển ô trống sang phải nếu có thể -----#
     def moveright(self):
         if self.blankloc[1] == 2:
             return None
@@ -75,7 +76,7 @@ class Node:
 
         return Node(right, self.gfunc + 1, 'right')
 
-    # ----- Fucntion to move the blank tile up if possible -----#
+    # ----- Hàm di chuyển ô trống lên nếu có thể -----#
     def moveup(self):
         if self.blankloc[0] == 0:
             return None
@@ -86,7 +87,7 @@ class Node:
 
         return Node(up, self.gfunc + 1, 'up')
 
-    # ----- Fucntion to move the blank tile down if possible -----#
+    # ----- Hàm di chuyển ô trống xuống dưới nếu có thể -----#
     def movedown(self):
         if self.blankloc[0] == 2:
             return None
@@ -97,8 +98,8 @@ class Node:
 
         return Node(down, self.gfunc + 1, 'down')
 
-    # ----- Fucntion to check and perform all the moves according to possiblity and weather the next move is closed or not -----#
-    # ----- Close this node and all the new nodes to open list -----#
+    # ----- tạo ra các trạng thái mới bằng cách di chuyển ô trống sang trái, phải, lên hoặc xuống.
+    # Sau đó, nó đóng nút hiện tại và mở các nút mới được tạo ra. - ----#
     def moveall(self, game):
         left = self.moveleft()
         left = None if game.isclosed(left) else left
@@ -117,7 +118,7 @@ class Node:
 
         return left, right, up, down
 
-    # ----- Fucntion to print the array in beautifed format -----#
+    # ----- Hàm in mảng ra định dạng đẹp -----#
     def print(self):
         print(self.move + str(self.gfunc))
         print(self.pattern[0])
@@ -127,8 +128,8 @@ class Node:
 
 class Game:
 
-    # ---- Initilaize Node with start, goal, a hashtable of open nodes, a hashtable of closed Node and add the start to the open node ----#
-    # ---- Open nodes is a hash table based on 'f function' and Closed nodes is a hash table based on 'h function' ----#
+    #khởi tạo một đối tượng trò chơi với trạng thái ban đầu và trạng thái mục tiêu. Nó cũng khởi tạo các biến open và closed để theo dõi các nút đã mở và đóng.
+    # Cuối cùng, nó tính toán hàm heuristic cho trạng thái ban đầu và thêm nó vào danh sách các nút mở.#
     def __init__(self, start, goal):
         self.start = start
         self.goal = goal
@@ -137,12 +138,13 @@ class Game:
         _, _, ffunc = self.start.calc_hfunc(self.goal)
         self.open[ffunc] = [start]
 
-    # ---- Fucntion to check weather a node is in closed node or not ----#
+    # kiểm tra xem một nút đã được đóng hay chưa bằng cách tính toán hàm heuristic cho nút đó và kiểm tra xem giá trị hàm heuristic đó có trong danh sách bảng băm đó không.
+    # Nếu có, nó sẽ kiểm tra xem nút đã được đóng có trong danh sách các nút đã đóng với giá trị hàm heuristic tương ứng hay không.#
     def isclosed(self, node):
-        if node == None:  # return True if no node
+        if node == None:  # trả về True nếu không có nút nào
             return True
 
-        hfunc, _, _ = node.calc_hfunc(self.goal)  # calculate hfucntion to check in that list of the hash table
+        hfunc, _, _ = node.calc_hfunc(self.goal)  # tính toán hfucntion để kiểm tra danh sách bảng băm đó
 
         if hfunc in self.closed:
             for x in self.closed[hfunc]:
@@ -151,15 +153,16 @@ class Game:
 
         return False
 
-    # ---- Function to add a node to the closed list and remove it from the open nodes list ----#
+    #  xóa nút khỏi danh sách các nút mở và thêm nó vào danh sách các nút đã đóng.
+    #  Nếu danh sách các nút mở trống, nó sẽ xóa thuộc tính của hàm heuristic đó khỏi bảng băm.#
     def closeNode(self, node):
-        if node == None:  # return back if no node
+        if node == None:
             return
 
         hfunc, _, ffunc = node.calc_hfunc(self.goal)
-        self.open[ffunc].remove(node)  # remove from the list of the ffunction of the hash table for open nodes
+        self.open[ffunc].remove(node)  # xóa khỏi danh sách ffunc của bảng băm cho các nút mở
         if len(self.open[ffunc]) == 0:
-            del self.open[ffunc]  # remove the attribute for a ffunction if its list is empty
+            del self.open[ffunc]  # xóa thuộc tính của hàm nếu danh sách của nó trống
 
         if hfunc in self.closed:
             self.closed[hfunc].append(node)
@@ -168,13 +171,14 @@ class Game:
 
         return
 
-    # ---- Function to add a node to the open list after its initilaized ----#
+    # thêm nút vào danh sách các nút mở.
+    # Nếu danh sách các nút mở không có thuộc tính ffunc tương ứng, nó sẽ tạo một thuộc tính mới với giá trị ffunc đó.#
     def openNode(self, node):
         if node == None:
             return
 
         _, _, ffunc = node.calc_hfunc(
-            self.goal)  # Calculate ffucntion to add the node to the list of that ffucntion in hash table
+            self.goal)  # Tính ffunnc để thêm nút vào danh sách kết quả đó trong bảng băm
         if ffunc in self.open:
             self.open[ffunc].append(node)
         else:
@@ -182,7 +186,7 @@ class Game:
 
         return
 
-    # ---- Function to solve the game using A star algorithm ----#
+    # ---- Hàm giải game bằng thuật toán A star ----#
     def solve(self):
 
         presentNode = None
@@ -190,14 +194,14 @@ class Game:
         while (presentNode != self.goal):
             i = 0
             while i not in self.open:
-                i += 1  # Check for the list with least 'ffunction' to pick a node from that list
+                i += 1  # Kiểm tra danh sách có ít 'ffunction' nhất để chọn một nút từ danh sách đó
             presentNode = self.open[i][-1]
-            presentNode.moveall(self)  # Expand that node for next possible moves
+            presentNode.moveall(self)  # Mở rộng nút đó cho các bước di chuyển có thể tiếp theo
 
-        # ---- Print the solution in reverse direction i.e. from goal to start----#
+        # ---- In giải pháp theo hướng ngược lại, tức là từ mục tiêu đến đầu ----#
         while presentNode.move != 'start':
             presentNode.print()
-            # do reverse move that what was done to reach the state to backtrack along the solution
+            # di chuyển ngược lại những gì đã được thực hiện để đạt đến trạng thái quay lại theo giải pháp
             if presentNode.move == 'up':
                 presentNode = presentNode.movedown()
             elif presentNode.move == 'down':
@@ -216,7 +220,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    # ----- Argument Parses -----#
+    # ----- Phân tích đối số -----#
     parser = argparse.ArgumentParser()
     # parser.add_argument("--hfunc",help='choose 1 for Manhattan distance and 2 for Displaced tiles.',metavar='Heuristic Function', default='1')
     parser.add_argument("--startrow",
@@ -234,23 +238,23 @@ if __name__ == '__main__':
 
     x = [1, 2, 3, 4, 5, 6, 7, 8, 0]
 
-    # ----- Assert if Input is correct -----#
+    # ----- Xác nhận nếu Đầu vào đúng -----#
 
     assert set(x) == set(args.startrow)
     assert set(x) == set(args.goalrow)
 
-    # ----- Reformat Input -----#
+    # ----- Định dạng lại Đầu vào -----#
 
     startloc = [args.startrow[0:3], args.startrow[3:6], args.startrow[6:]]
     goalloc = [args.goalrow[0:3], args.goalrow[3:6], args.goalrow[6:]]
 
-    # ----- Initalize start and end node -----#
+    # ----- Khởi tạo nút bắt đầu và kết thúc -----#
 
     start = Node(startloc, 0)
     goal = Node(goalloc, 0, 'goal')
 
-    # ----- Initilaize Game -----#
+    # ----- Khởi tạo trò chơi -----#
 
     game = Game(start, goal)
 
-    game.solve()  # Solve Game
+    game.solve()  # Giải quyết trò chơi
